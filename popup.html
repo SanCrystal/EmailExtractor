@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Email Extractor Pro</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="popup.css" />
+	</head>
+	<body>
+		<div class="app-container">
+			<header class="app-header">
+				<div class="logo-container">
+					<svg class="logo-icon" viewBox="0 0 24 24">
+						<path
+							d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.4 4.25l-7.07 4.42c-.32.2-.74.2-1.06 0L4.4 8.25a.85.85 0 1 1 .9-1.44L12 11l6.7-4.19a.85.85 0 1 1 .9 1.44z"
+						/>
+					</svg>
+					<h1>Email Extractor Pro</h1>
+				</div>
+				<p class="app-subtitle">Professional email extraction tool</p>
+			</header>
+
+			<main class="app-main">
+				<section class="input-section">
+					<div class="file-upload-card">
+						<label for="fileInput" class="upload-label">
+							<svg viewBox="0 0 24 24">
+								<path
+									d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"
+								/>
+							</svg>
+							<span>Choose File</span>
+							<span id="fileName" class="file-name">No file selected</span>
+						</label>
+						<input type="file" id="fileInput" accept=".txt,.csv" />
+					</div>
+
+					<div class="settings-card">
+						<div class="setting-group">
+							<label for="separatorSelect">Output Format:</label>
+							<select id="separatorSelect">
+								<option value=",">Comma separated (,)</option>
+								<option value=";">Semicolon separated (;)</option>
+								<option value="\n">One per line</option>
+								<option value="\t">Tab separated</option>
+								<option value="|">Pipe (|) separated</option>
+							</select>
+						</div>
+
+						<!-- <div class="setting-group">
+							<label for="filenameInput">Download Filename:</label>
+							<div class="filename-input-group">
+								<input
+									type="text"
+									id="filenameInput"
+									placeholder="extracted_emails"
+									value="extracted_emails"
+								/>
+								<select id="fileExtensionSelect" class="file-extension-select">
+									<option value=".txt">.txt</option>
+									<option value=".csv">.csv</option>
+									<option value=".pdf">.pdf</option>
+									<option value=".doc">.doc</option>
+									<option value=".json">.json</option>
+								</select>
+							</div>
+						</div> -->
+						<div class="setting-group">
+							<label for="filenameInput">Download Filename</label>
+							<div class="filename-input-group">
+								<input
+									type="text"
+									id="filenameInput"
+									placeholder="extracted_emails"
+								/>
+								<select id="fileExtensionSelect">
+									<option value=".txt">.txt</option>
+									<option value=".csv">.csv</option>
+									<option value=".txt">.txt</option>
+									<option value=".csv">.csv</option>
+									<option value=".pdf">.pdf</option>
+									<option value=".doc">.doc</option>
+									<option value=".json">.json</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<button id="extractButton" class="action-button extract-btn" disabled>
+						<span class="spinner"></span>
+						<span>Extract Emails</span>
+					</button>
+				</section>
+
+				<section id="resultsArea" class="results-section hidden">
+					<div class="results-header">
+						<h2>Extracted Emails</h2>
+						<div class="results-meta">
+							<span id="emailCount" class="count-badge">0 emails</span>
+							<button id="copyAllBtn" class="icon-btn" title="Copy all">
+								<svg viewBox="0 0 24 24">
+									<path
+										d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+									/>
+								</svg>
+							</button>
+						</div>
+					</div>
+
+					<div class="results-container">
+						<textarea id="extractedEmails" readonly></textarea>
+					</div>
+
+					<div class="results-actions">
+						<button id="downloadButton" class="action-button download-btn">
+							<svg viewBox="0 0 24 24">
+								<path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+							</svg>
+							<span>Download</span>
+						</button>
+					</div>
+				</section>
+
+				<div id="messageBox" class="message-box hidden"></div>
+			</main>
+
+			<footer class="app-footer">
+				<p>Email Extractor Pro v1.1</p>
+			</footer>
+		</div>
+
+		<script src="lib/min/pdfkit.min.js"></script>
+		<script src="lib/min/blobStream.min.js"></script>
+		<script src="lib/min/docx.min.js"></script>
+
+		<script src="popup.js"></script>
+	</body>
+</html>

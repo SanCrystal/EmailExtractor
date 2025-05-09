@@ -1,0 +1,23 @@
+{
+	"manifest_version": 3,
+	"name": "Email Extractor Pro",
+	"version": "1.0",
+	"description": "Extracts and validates email addresses from text or CSV files",
+	"permissions": ["activeTab"],
+	"content_security_policy": {
+		"extension_pages": "script-src 'self'; object-src 'self'"
+	},
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "mail.png",
+			"48": "mail.png",
+			"128": "mail.png"
+		}
+	},
+	"icons": {
+		"16": "mail.png",
+		"48": "mail.png",
+		"128": "/mail.png"
+	}
+}
