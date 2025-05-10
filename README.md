@@ -1,39 +1,36 @@
 # 📧 Email Extractor Pro - Chrome Extension
 
 **Author**: Santa  
-**Version**: 1.2  
+**Version**: 2.0  
 **License**: MIT  
 
 ![Extension Screenshot](screenshot.png)
 
-## 🌟 Features
+## 🌟 Enhanced Features
 
-### 🔍 Powerful Email Extraction
-- Extract emails from text files (.txt) and CSV files (.csv)
-- Advanced regex pattern matching for comprehensive email discovery
-- Automatic duplicate removal
-- Real-time results counter
+### 🆕 Multi-File Processing
+- Upload and process **multiple files simultaneously** (TXT, CSV)
+- Combined email extraction across all files
+- Progress indicators for batch processing
+- File size validation (10MB limit per file)
 
-### 🛠 Customizable Output
-- Multiple output separators:
-  - Comma (,)
-  - Semicolon ( ; )
-  - New line
-  - Tab
-  - Pipe (|)
-- Custom filename specification
-- Multiple export formats:
-  - Text (.txt)
-  - CSV (.csv)
-  - PDF (.pdf)
-  - Word (.docx)
-  - JSON (.json)
+### 🔍 Advanced Domain Management
+- **Automatic domain separation** (gmail.com, outlook.com, etc.)
+- **Domain filtering** - quickly find specific email providers
+- Visual domain distribution cards
+- Domain-specific email counts
 
-### 🎨 Professional Interface
-- Modern, clean UI with intuitive controls
-- Responsive design works on all screen sizes
-- Visual feedback for all actions
-- Progress indicators during processing
+### 🗂 Multi-Format Export Options
+- **Individual domain exports** (copy/download specific domains)
+- **Bulk export all domains** as ZIP archive
+- Export formats for domains match main settings
+- Preserved folder structure in ZIP exports
+
+### 🛠 Existing Powerful Features
+- Duplicate email removal
+- Multiple output separators (comma, tab, pipe, etc.)
+- Various export formats (TXT, CSV, PDF, DOCX, JSON)
+- Clean, professional interface
 
 ## 📦 Installation
 
@@ -51,33 +48,47 @@
 3. Enable "Developer mode" (toggle in top right)
 4. Click "Load unpacked" and select the extension folder
 
-## 🚀 Usage
+## 🚀 Usage Guide
 
+### Basic Workflow
 1. Click the extension icon in your Chrome toolbar
-2. Upload a file using the "Choose File" button
-3. Configure your output settings:
-   - Select preferred separator
-   - Customize filename (optional)
-   - Choose export format
-4. Click "Extract Emails"
-5. View results in the output panel
-6. Choose to:
-   - Copy all emails to clipboard
-   - Download in your selected format
+2. Upload one or more files using "Choose Files" button
+3. Monitor progress in real-time
+4. View extracted emails and domain distribution
+5. Export results:
+   - Copy/download all emails
+   - Copy/download specific domains
+   - Export all domains as ZIP package
+
+### Advanced Features
+- **Domain Filtering**:
+  - Type in the filter box to show only matching domains
+  - Click "Filter" button to apply
+  
+- **Bulk Domain Export**:
+  - Click "Export All Domains" to generate ZIP
+  - Each domain becomes a separate file
+  - Maintains your preferred format/separator
+
+- **Multi-File Tips**:
+  - Process up to 10 files at once
+  - Total size limit: 50MB
+  - Cancel processing by closing popup
 
 ## 🛠 Technical Details
 
 ### System Architecture
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Libraries**:
+- **Key Libraries**:
   - PDFKit (PDF generation)
   - docx.js (Word document generation)
+  - JSZip (ZIP archive creation)
 - **Chrome APIs**: ActiveTab, Downloads
 
-### File Processing
-- Supports files up to 10MB
+### Performance
 - Processes ~10,000 emails/second
 - Memory-efficient streaming processing
+- Progressive UI updates during long operations
 
 ## 📂 Project Structure
 
@@ -91,52 +102,40 @@
 ├── /lib                     # Third-party libraries
 │   ├── pdfkit.standalone.js # PDF generation
 │   ├── blobStream.js        # Stream handling
-│   └── docx.iife.js         # Word document generation
+│   ├── docx.iife.js         # Word document generation
+│   └── jszip.min.js         # ZIP archive functionality
 ├── popup.html               # Main interface
 ├── popup.css                # Stylesheet
 ├── popup.js                 # Core functionality
 └── manifest.json            # Extension configuration
 ```
 
-## 🛠 Development
+## 🐛 Troubleshooting
 
-### Prerequisites
-- Chrome browser (latest version)
-- Text editor or IDE
-- Basic understanding of Chrome extensions
+**Issue**: Files not processing  
+✅ Solution: 
+- Check file types (.txt or .csv only)
+- Verify file size <10MB
+- Try fewer files at once
 
-### Building from Source
-1. Clone repository:
-   ```bash
-   git clone https://github.com/yourusername/email-extractor-pro.git
-   ```
-2. Install dependencies (if modifying libraries):
-   ```bash
-   npm install
-   ```
+**Issue**: Missing some emails  
+✅ Solution:
+- Check for non-standard email formats
+- Verify files contain properly formatted emails
+- Try different separator options
 
-### Testing
-1. Load the unpacked extension in Chrome
-2. Use test files from `/test_samples` directory
-3. Verify all export formats work correctly
+**Issue**: ZIP export fails  
+✅ Solution:
+- Ensure you have storage permissions
+- Try smaller export sets
+- Check available disk space
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
-
-1. Fork the project
-2. Create your feature branch:
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m 'Add some amazing feature'
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ## 📜 License
@@ -145,12 +144,13 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-Arthur Santa - [contact@arthursanta.com](#)
+Santa - [codemafia.dev@gmail.com](#)
 
-Project Link: [https://github.com/yourusername/email-extractor-pro](#)
+Project Link: [https://github.com/sanCrystal/email-extractor-pro](#)
 
-## 🙏 Acknowledgments
+---
 
-- Chrome Extension documentation
-- PDFKit and docx.js teams
-- All open source contributors
+**Version History**:
+- v2.0 - Added multi-file support, domain separation, bulk exports
+- v1.2 - Enhanced export options and UI improvements
+- v1.0 - Initial release with basic extraction features
