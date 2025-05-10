@@ -12,6 +12,7 @@
 	</head>
 	<body>
 		<div class="app-container">
+            <div id="messageBox" class="message-box hidden"></div>
 			<header class="app-header">
 				<div class="logo-container">
 					<svg class="logo-icon" viewBox="0 0 24 24">
@@ -33,10 +34,10 @@
 									d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"
 								/>
 							</svg>
-							<span>Choose File</span>
-							<span id="fileName" class="file-name">No file selected</span>
+							<span>Choose Files</span>
+							<span id="fileName" class="file-name">No files selected</span>
 						</label>
-						<input type="file" id="fileInput" accept=".txt,.csv" />
+						<input type="file" id="fileInput" accept=".txt,.csv" multiple />
 					</div>
 
 					<div class="settings-card">
@@ -51,24 +52,6 @@
 							</select>
 						</div>
 
-						<!-- <div class="setting-group">
-							<label for="filenameInput">Download Filename:</label>
-							<div class="filename-input-group">
-								<input
-									type="text"
-									id="filenameInput"
-									placeholder="extracted_emails"
-									value="extracted_emails"
-								/>
-								<select id="fileExtensionSelect" class="file-extension-select">
-									<option value=".txt">.txt</option>
-									<option value=".csv">.csv</option>
-									<option value=".pdf">.pdf</option>
-									<option value=".doc">.doc</option>
-									<option value=".json">.json</option>
-								</select>
-							</div>
-						</div> -->
 						<div class="setting-group">
 							<label for="filenameInput">Download Filename</label>
 							<div class="filename-input-group">
@@ -76,10 +59,9 @@
 									type="text"
 									id="filenameInput"
 									placeholder="extracted_emails"
+									value="extracted_emails"
 								/>
 								<select id="fileExtensionSelect">
-									<option value=".txt">.txt</option>
-									<option value=".csv">.csv</option>
 									<option value=".txt">.txt</option>
 									<option value=".csv">.csv</option>
 									<option value=".pdf">.pdf</option>
@@ -98,7 +80,7 @@
 
 				<section id="resultsArea" class="results-section hidden">
 					<div class="results-header">
-						<h2>Extracted Emails</h2>
+						<h2>All Extracted Emails</h2>
 						<div class="results-meta">
 							<span id="emailCount" class="count-badge">0 emails</span>
 							<button id="copyAllBtn" class="icon-btn" title="Copy all">
@@ -120,23 +102,45 @@
 							<svg viewBox="0 0 24 24">
 								<path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
 							</svg>
-							<span>Download</span>
+							<span>Download All</span>
+						</button>
+						<button id="exportAllButton" class="action-button">
+							<svg viewBox="0 0 24 24">
+								<path
+									d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+								/>
+							</svg>
+							<span>Export All Domains</span>
 						</button>
 					</div>
+
+					<div class="domain-controls">
+						<div class="filter-controls">
+							<input
+								type="text"
+								id="domainFilterInput"
+								placeholder="Filter domains (e.g., gmail.com)"
+							/>
+							<button id="filterDomainButton">Filter</button>
+						</div>
+					</div>
+
+					<h3 class="domains-title">Emails by Domain</h3>
+					<div id="domainsContainer" class="domains-list"></div>
 				</section>
 
-				<div id="messageBox" class="message-box hidden"></div>
+				
 			</main>
 
 			<footer class="app-footer">
-				<p>Email Extractor Pro v1.1</p>
+				<p>Email Extractor Pro v2.0</p>
 			</footer>
 		</div>
 
 		<script src="lib/min/pdfkit.min.js"></script>
 		<script src="lib/min/blobStream.min.js"></script>
 		<script src="lib/min/docx.min.js"></script>
-
+		<script src="lib/min/jszip.min.js"></script>
 		<script src="popup.js"></script>
 	</body>
 </html>

@@ -17,6 +17,9 @@
 	--radius-md: 8px;
 	--radius-lg: 12px;
 	--transition: all 0.2s ease;
+    --success-light: rgba(76, 201, 240, 0.1);
+    --success-dark: #0e7aa5;
+
 }
 
 * {
@@ -433,30 +436,32 @@ body {
 	padding: 0.875rem 1rem;
 	border-radius: var(--radius-sm);
 	font-size: 0.875rem;
-	margin-bottom: 1.25rem;
+    position: sticky;
+    top:0;
+    margin-top: 0.5rem;
 	animation: fadeIn 0.3s ease-out;
 }
 
 .message-box.success {
-	background-color: rgba(76, 201, 240, 0.1);
+	background-color: rgba(76, 201, 240, 0.5);
 	border: 1px solid rgba(76, 201, 240, 0.2);
 	color: #0e7aa5;
 }
 
 .message-box.warning {
-	background-color: rgba(248, 150, 30, 0.1);
+	background-color: rgba(248, 150, 30, 0.5);
 	border: 1px solid rgba(248, 150, 30, 0.2);
 	color: #c57618;
 }
 
 .message-box.error {
-	background-color: rgba(247, 37, 133, 0.1);
+	background-color: rgba(247, 37, 133, 0.5);
 	border: 1px solid rgba(247, 37, 133, 0.2);
 	color: #c2185b;
 }
 
 .message-box.info {
-	background-color: rgba(67, 97, 238, 0.1);
+	background-color: rgba(67, 97, 238, 0.5);
 	border: 1px solid rgba(67, 97, 238, 0.2);
 	color: var(--primary);
 }
@@ -470,6 +475,128 @@ body {
 	border-top-color: white;
 	animation: spin 1s ease-in-out infinite;
 	display: none;
+}
+
+.domain-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.domain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.domain-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.domain-count {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+}
+
+.domain-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.domain-actions button {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.domain-actions button svg {
+    width: 16px;
+    height: 16px;
+}
+
+.copy-domain {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.copy-domain:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.download-domain {
+    background: var(--success-light);
+    color: var(--success-dark);
+    border: 1px solid var(--success);
+}
+
+.download-domain:hover {
+    background: var(--success);
+    color: white;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.filter-controls input {
+    flex: 1;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+}
+
+.filter-controls button {
+    padding: 0.625rem 1.25rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    margin: 1rem 0;
+    padding: 0.25rem;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: var(--primary);
+    border-radius: var(--radius-sm);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
 }
 
 @keyframes spin {

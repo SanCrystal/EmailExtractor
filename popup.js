@@ -14,9 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	const downloadButton = document.getElementById("downloadButton");
 	const messageBox = document.getElementById("messageBox");
 	const fileExtensionSelect = document.getElementById("fileExtensionSelect");
+	const domainFilterInput = document.getElementById("domainFilterInput");
+	const filterDomainButton = document.getElementById("filterDomainButton");
+	const domainsContainer = document.getElementById("domainsContainer");
+	const exportAllButton = document.getElementById("exportAllButton");
+	fileInput.multiple = true;
 
 	let extractedEmails = [];
 	let currentFilename = "extracted_emails";
+	let emailDomains = {};
+	let activeFiles = [];
 
 	// Improved email regex
 	const emailRegex =
@@ -29,19 +36,297 @@ document.addEventListener("DOMContentLoaded", () => {
 	copyAllBtn.addEventListener("click", copyAllEmails);
 	downloadButton.addEventListener("click", downloadEmails);
 	filenameInput.addEventListener("input", updateFilename);
+	filterDomainButton.addEventListener("click", filterDomains);
+	exportAllButton.addEventListener("click", exportAllDomains);
+    
 
 	// Functions
 	function handleFileSelect() {
 		if (fileInput.files.length > 0) {
-			const file = fileInput.files[0];
-			fileNameDisplay.textContent = file.name;
+			fileNameDisplay.textContent = `${fileInput.files.length} file(s) selected`;
 			extractButton.disabled = false;
 			showMessage("");
 			resultsArea.classList.add("hidden");
 			extractedEmails = [];
+			emailDomains = {};
 		} else {
-			fileNameDisplay.textContent = "No file selected";
+			fileNameDisplay.textContent = "No files selected";
 			extractButton.disabled = true;
+		}
+	}
+
+	function getEmailDomain(email) {
+		const domain = email.split("@")[1];
+		const parts = domain.split(".");
+		// Handle subdomains by grouping main domains
+		return parts.length > 2 ? parts.slice(-2).join(".") : domain;
+	}
+
+	function displayResults() {
+		// Display all emails as before
+		displayEmails(extractedEmails);
+		resultsArea.classList.remove("hidden");
+		emailCount.textContent = `${extractedEmails.length} ${
+			extractedEmails.length === 1 ? "email" : "emails"
+		}`;
+
+		// Display domain groups
+		domainsContainer.innerHTML = "";
+
+		// Sort domains by email count (descending)
+		const sortedDomains = Object.keys(emailDomains).sort(
+			(a, b) => emailDomains[b].length - emailDomains[a].length
+		);
+
+		sortedDomains.forEach((domain) => {
+			const domainCard = document.createElement("div");
+			domainCard.className = "domain-card";
+
+			domainCard.innerHTML = `
+            <div class="domain-header">
+                <h3>${domain}</h3>
+                <span class="domain-count">${emailDomains[domain].length} emails</span>
+            </div>
+            <div class="domain-actions">
+                <button class="copy-domain" data-domain="${domain}">
+                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    Copy
+                </button>
+                <button class="download-domain" data-domain="${domain}">
+                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Download
+                </button>
+            </div>
+        `;
+
+			domainsContainer.appendChild(domainCard);
+		});
+	}
+
+	async function processMultipleFiles(files) {
+		// Clear previous results
+		extractedEmails = [];
+		emailDomains = {};
+
+		// Show loading state for all files
+		extractButton.disabled = true;
+		extractSpinner.style.display = "block";
+		extractButtonText.textContent = `Processing ${files.length} files...`;
+
+		try {
+			// Process files sequentially to avoid memory issues
+			for (const file of files) {
+				try {
+					const fileContent = await readFileAsText(file);
+					const emails = fileContent.match(emailRegex) || [];
+
+					// Update loading state for current file
+					extractButtonText.textContent = `Processing ${file.name}...`;
+
+					// Process emails from this file
+					emails.forEach((email) => {
+						const cleanEmail = email.trim().toLowerCase();
+						if (isValidEmail(cleanEmail)) {
+							// Add to master list (duplicates will be removed later)
+							extractedEmails.push(cleanEmail);
+
+							// Group by domain
+							const domain = getEmailDomain(cleanEmail);
+							if (!emailDomains[domain]) {
+								emailDomains[domain] = [];
+							}
+							// Only add if not already present for this domain
+							if (!emailDomains[domain].includes(cleanEmail)) {
+								emailDomains[domain].push(cleanEmail);
+							}
+						}
+					});
+				} catch (error) {
+					console.error(`Error processing ${file.name}:`, error);
+					showMessage(`Error processing ${file.name}`, "error");
+				}
+			}
+
+			// Remove duplicates from all emails
+			extractedEmails = [...new Set(extractedEmails)];
+
+			if (extractedEmails.length > 0) {
+				displayResults();
+				showMessage(
+					`Processed ${files.length} file(s). Found ${extractedEmails.length} unique emails.`,
+					"success"
+				);
+			} else {
+				showMessage("No valid emails found in the files.", "warning");
+			}
+		} catch (error) {
+			console.error("Error processing files:", error);
+			showMessage("Failed to process files", "error");
+		} finally {
+			// Reset loading state
+			extractButton.disabled = false;
+			extractSpinner.style.display = "none";
+			extractButtonText.textContent = "Extract Emails";
+		}
+	}
+
+	function filterDomains() {
+		const filter = domainFilterInput.value.trim().toLowerCase();
+		if (!filter) return;
+
+		const filteredDomains = {};
+		let totalFiltered = 0;
+
+		Object.keys(emailDomains).forEach((domain) => {
+			if (domain.includes(filter)) {
+				filteredDomains[domain] = emailDomains[domain];
+				totalFiltered += emailDomains[domain].length;
+			}
+		});
+
+		if (Object.keys(filteredDomains).length > 0) {
+			emailDomains = filteredDomains;
+			displayResults();
+			showMessage(
+				`Found ${totalFiltered} emails in matching domains`,
+				"success"
+			);
+		} else {
+			showMessage("No domains match your filter", "warning");
+		}
+	}
+
+	async function exportAllDomains() {
+		if (Object.keys(emailDomains).length === 0) {
+			showMessage("No domains to export", "warning");
+			return;
+		}
+
+		const zip = new JSZip();
+		const separator =
+			separatorSelect.value === "\\n"
+				? "\n"
+				: separatorSelect.value === "\\t"
+				? "\t"
+				: separatorSelect.value;
+
+		// Add each domain as a separate file
+		for (const domain in emailDomains) {
+			const content = emailDomains[domain].join(separator);
+			const filename = `${currentFilename}_${domain.replace(/\./g, "_")}${
+				fileExtensionSelect.value
+			}`;
+			zip.file(filename, content);
+		}
+
+		// Generate and download the ZIP
+		const zipContent = await zip.generateAsync({ type: "blob" });
+		const url = URL.createObjectURL(zipContent);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = `${currentFilename}_domains.zip`;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+
+		showMessage("All domains exported as separate files", "success");
+	}
+
+	domainsContainer.addEventListener("click", (e) => {
+		const domain = e.target.closest("button")?.dataset.domain;
+		if (!domain) return;
+
+		if (e.target.closest(".copy-domain")) {
+			copyDomainEmails(domain);
+		} else if (e.target.closest(".download-domain")) {
+			downloadDomainEmails(domain);
+		}
+	});
+
+	function copyDomainEmails(domain) {
+		const emails = emailDomains[domain];
+		if (!emails || emails.length === 0) {
+			showMessage(`No emails found for ${domain}`, "warning");
+			return;
+		}
+
+		const separator =
+			separatorSelect.value === "\\n"
+				? "\n"
+				: separatorSelect.value === "\\t"
+				? "\t"
+				: separatorSelect.value;
+
+		navigator.clipboard
+			.writeText(emails.join(separator))
+			.then(() =>
+				showMessage(`Copied ${emails.length} ${domain} emails`, "success")
+			)
+			.catch((err) => showMessage("Failed to copy emails", "error"));
+	}
+
+	async function downloadDomainEmails(domain) {
+		const emails = emailDomains[domain];
+		if (!emails || emails.length === 0) {
+			showMessage(`No emails found for ${domain}`, "warning");
+			return;
+		}
+
+		const separator =
+			separatorSelect.value === "\\n"
+				? "\n"
+				: separatorSelect.value === "\\t"
+				? "\t"
+				: separatorSelect.value;
+
+		const extension = fileExtensionSelect.value;
+		let content, mimeType, blob;
+
+		try {
+			switch (extension) {
+				case ".csv":
+					mimeType = "text/csv";
+					content = emails.join(separator === "\t" ? "\t" : ",");
+					blob = new Blob([content], { type: mimeType });
+					break;
+				case ".json":
+					mimeType = "application/json";
+					content = JSON.stringify(emails, null, 2);
+					blob = new Blob([content], { type: mimeType });
+					break;
+				case ".pdf":
+					blob = await generatePDF(
+						emails,
+						separator,
+						`${currentFilename}_${domain.replace(/\./g, "_")}`
+					);
+					break;
+				case ".doc":
+					blob = await generateDOCX(emails, separator);
+					break;
+				default: // .txt
+					mimeType = "text/plain";
+					content = emails.join(separator);
+					blob = new Blob([content], { type: mimeType });
+			}
+
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `${currentFilename}_${domain.replace(
+				/\./g,
+				"_"
+			)}${extension}`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+
+			showMessage(`Downloaded ${emails.length} ${domain} emails`, "success");
+		} catch (error) {
+			console.error("Domain export error:", error);
+			showMessage("Failed to export domain emails", "error");
 		}
 	}
 
@@ -50,20 +335,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	async function handleExtraction() {
-		const file = fileInput.files[0];
-		if (!file) {
-			showMessage("Please select a file first.", "error");
+		if (fileInput.files.length === 0) {
+			showMessage("Please select files first", "error");
 			return;
 		}
 
-		// Show loading state
 		extractButton.disabled = true;
 		extractSpinner.style.display = "block";
 		extractButtonText.textContent = "Processing...";
 
 		try {
-			const fileContent = await readFileAsText(file);
-			extractEmails(fileContent);
+			await processMultipleFiles(Array.from(fileInput.files));
 		} catch (error) {
 			showMessage(`Error: ${error.message}`, "error");
 		} finally {
